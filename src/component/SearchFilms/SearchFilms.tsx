@@ -9,6 +9,7 @@ import {Button, CircularProgress, Pagination, Paper, TextField} from "@mui/mater
 
 export const SearchFilms = () => {
     const [valueInput, setValueInput] = useState('')
+    const [Error, setError] = useState('')
     const dispatch = useDispatch<AppDispatch>()
 
     const films = useSelector<AppStoreType, Array<filmType>>(state => state.app.films)
@@ -23,12 +24,18 @@ export const SearchFilms = () => {
         dispatch(getOneFilmTC(id, title))
     }
     const onChangeHandlerTextField = (e: ChangeEvent<HTMLInputElement>) => {
+        setError('')
         setValueInput(e.currentTarget.value)
     }
 
     const onClickHandler = () => {
-        dispatch(getFilmsTC(valueInput, 1))
-        setValueInput('')
+        if(valueInput.trim() === ''){
+            setError('Field required')
+        }else {
+            dispatch(getFilmsTC(valueInput, 1))
+            setValueInput('')
+        }
+
     }
 
     const onChangeHandlerPagination = (event: React.ChangeEvent<unknown>, page: number) => {
@@ -52,12 +59,13 @@ export const SearchFilms = () => {
         )
     })
     if (isLoading) {
-        return <CircularProgress style={{display:'flex',alignSelf:'center'}}/>
+        return <CircularProgress style={{display: 'flex', alignSelf: 'center'}}/>
     }
 
     return <div className={c.containerSearchFilms}>
         <TextField style={{margin: '10px'}} value={valueInput} onChange={onChangeHandlerTextField} color={"info"}
                    variant="outlined"/>
+        {Error ? <h3 style={{color:'red'}}>{Error}</h3> : <br/>}
         <Button variant="outlined" onClick={onClickHandler}>Request films</Button>
         <Pagination style={{margin: '10px'}} page={currentPage} onChange={onChangeHandlerPagination}
                     count={allPagesCount}/>
