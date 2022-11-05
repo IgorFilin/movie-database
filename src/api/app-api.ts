@@ -60,8 +60,8 @@ export type OpenDescriptionsFilmType = {
 
 
 export const api = {
-    getMovies(nameFilm: string) {
-        return instance.get<getResponseType>(`?apikey=${key}&s=${nameFilm}`)
+    getMovies(nameFilm: string,page:number) {
+        return instance.get<getResponseType>(`?apikey=${key}&s=${nameFilm}&page=${page}`)
     },
     getFilm(title:string){
       return instance.get<OpenDescriptionsFilmType>(`?apikey=${key}&plot=full&t=${title}`)

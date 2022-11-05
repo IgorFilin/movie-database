@@ -1,0 +1,30 @@
+.containerSearchFilms {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 90%;
+    height: 10%;
+}
+
+
+.film {
+    min-width: 90%;
+    color: white;
+    margin: 10px;
+}
+.navLink{
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    justify-content: center;
+    align-content: center;
+}
+.navLink img {
+    width: 50%;
+}
+.navLink h3 {
+    margin: 5px;
+}
