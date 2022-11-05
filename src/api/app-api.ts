@@ -63,8 +63,8 @@ export const api = {
     getMovies(nameFilm: string,page:number) {
         return instance.get<getResponseType>(`?apikey=${key}&s=${nameFilm}&page=${page}`)
     },
-    getFilm(title:string){
-      return instance.get<OpenDescriptionsFilmType>(`?apikey=${key}&plot=full&t=${title}`)
+    getFilm(id:string){
+      return instance.get<OpenDescriptionsFilmType>(`?apikey=${key}&plot=full&i=${id}`)
     }
 }
 // http://www.omdbapi.com/?apikey=a5aa57ed&s=batman

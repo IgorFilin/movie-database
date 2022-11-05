@@ -1,7 +1,7 @@
 import {api, filmType, OpenDescriptionsFilmType} from "../api/app-api";
 import {Dispatch} from "redux";
 
-export type allActionsTypeAppReducer = getFilmsACtype | setSearchOneFilmACtype | setTotalResultPagesFilmACtype | setCurrentPageACtype | setTitleSearchFilmsACtype | setIsLoadingFilmsACtype
+export type allActionsTypeAppReducer = getFilmsACtype | setSearchOneFilmACtype | setTotalResultPagesFilmACtype | setCurrentPageACtype | setTitleSearchFilmsACtype | setIsLoadingFilmsACtype | setScrollACtype
 
 type initialStateType = {
     films: Array<filmType> | []
@@ -10,6 +10,7 @@ type initialStateType = {
     currentPage:number
     titleSearchFilm:string
     isLoading:boolean
+    scroll:number
 }
 type getFilmsACtype = ReturnType<typeof setSearchFilms>
 type setSearchOneFilmACtype = ReturnType<typeof setSearchOneFilm>
@@ -17,6 +18,7 @@ type setTotalResultPagesFilmACtype = ReturnType<typeof setTotalResultFilm>
 type setCurrentPageACtype = ReturnType<typeof setCurrentPage>
 type setTitleSearchFilmsACtype = ReturnType<typeof setTitleSearchFilms>
 type setIsLoadingFilmsACtype = ReturnType<typeof setIsLoading>
+type setScrollACtype = ReturnType<typeof setScroll>
 
 const initialState = {
     films: [],
@@ -24,7 +26,8 @@ const initialState = {
     totalResults: '',
     currentPage:1,
     titleSearchFilm:'',
-    isLoading:false
+    isLoading:false,
+    scroll:0
 }
 
 export const AppReducer = (state: initialStateType = initialState, action: allActionsTypeAppReducer):initialStateType => {
@@ -46,6 +49,9 @@ export const AppReducer = (state: initialStateType = initialState, action: allAc
         }
         case "APP/SET-IS-LOADING":{
             return {...state,isLoading:action.value}
+        }
+        case "APP/SET-SCROLL":{
+            return  {...state,scroll:action.value}
         }
         default:
             return state
@@ -70,6 +76,9 @@ export const setCurrentPage = (page:number) => {
 export const setIsLoading = (value:boolean) => {
     return {type: 'APP/SET-IS-LOADING', value} as const
 }
+export const setScroll = (value:number) => {
+    return {type: 'APP/SET-SCROLL', value} as const
+}
 
 export const getFilmsTC = (titleSearchFilm: string,page:number) => async (dispatch: Dispatch) => {
     dispatch(setIsLoading(true))
@@ -81,9 +90,10 @@ export const getFilmsTC = (titleSearchFilm: string,page:number) => async (dispat
     dispatch(setIsLoading(false))
 }
 
-export const getOneFilmTC = (id: string, title: string) => async (dispatch: Dispatch) => {
+export const getOneFilmTC = (id: string,scrollValue:number) => async (dispatch: Dispatch) => {
     dispatch(setIsLoading(true))
-    const result = await api.getFilm(title)
+    const result = await api.getFilm(id)
+    dispatch(setScroll(scrollValue))
     dispatch(setSearchOneFilm(id, result.data))
     dispatch(setIsLoading(false))
 }

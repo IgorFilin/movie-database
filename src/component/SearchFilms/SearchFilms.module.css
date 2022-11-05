@@ -23,8 +23,13 @@
     align-content: center;
 }
 .navLink img {
-    width: 50%;
+    width: 20%;
 }
 .navLink h3 {
     margin: 5px;
+}
+@media screen and (max-width: 650px){
+    .navLink img {
+        width:50%
+    }
 }
