@@ -9,7 +9,7 @@ import {Button, CircularProgress, Pagination, Paper, TextField} from "@mui/mater
 
 export const SearchFilms = () => {
     const [valueInput, setValueInput] = useState('')
-    const [Error, setError] = useState('')
+    const [Error, setError] = useState('Please,using english words')
     const [scroll, setScroll] = useState(0);
 
     const scrollStateValue = useSelector<AppStoreType, number>(state => state.app.scroll)
@@ -44,10 +44,7 @@ export const SearchFilms = () => {
     const onChangeHandlerTextField = (e: ChangeEvent<HTMLInputElement>) => {
         setError('')
         let value = e.currentTarget.value
-        value = value.replace(/[^A-Za-z]/ig, '')
-        if(value === ''){
-            setError('Sorry only english words')
-        }
+        value = value.replace(/[^A-Za-z\s+-/\d/]/ig, '')
         setValueInput(value)
     }
 
@@ -55,7 +52,7 @@ export const SearchFilms = () => {
         if(valueInput.trim() === ''){
             setError('Field required')
         }else {
-            dispatch(getFilmsTC(valueInput, 1))
+            dispatch(getFilmsTC(valueInput.trim(), 1))
             setValueInput('')
         }
 
@@ -88,7 +85,6 @@ export const SearchFilms = () => {
     return <div className={c.containerSearchFilms}>
         <TextField  style={{margin: '10px'}} value={valueInput} onChange={onChangeHandlerTextField} color={"info"}
                    variant="outlined"/>
-        {Error ? <h3 style={{color:'red'}}>{Error}</h3> : <br/>}
         <Button  variant="outlined" onClick={onClickHandler}>Request films</Button>
         <Pagination style={{margin: '10px'}} page={currentPage} onChange={onChangeHandlerPagination}
                     count={allPagesCount}/>
