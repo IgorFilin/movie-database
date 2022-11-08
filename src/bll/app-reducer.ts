@@ -80,9 +80,9 @@ export const setScroll = (value:number) => {
     return {type: 'APP/SET-SCROLL', value} as const
 }
 
-export const getFilmsTC = (titleSearchFilm: string,page:number) => async (dispatch: Dispatch) => {
+export const getFilmsTC = (titleSearchFilm: string,page:number,year:string,type:string) => async (dispatch: Dispatch) => {
     dispatch(setIsLoading(true))
-    const result = await api.getMovies(titleSearchFilm,page)
+    const result = await api.getMovies(titleSearchFilm,page,year,type)
     dispatch(setTitleSearchFilms(titleSearchFilm))
     dispatch(setCurrentPage(page))
     dispatch(setSearchFilms(result.data.Search))

@@ -5,12 +5,32 @@ import {AppDispatch, AppStoreType} from "../../bll/store";
 import {filmType, OpenDescriptionsFilmType} from "../../api/app-api";
 import {getFilmsTC, getOneFilmTC} from "../../bll/app-reducer";
 import c from './SearchFilms.module.css'
-import {Button, CircularProgress, Pagination, Paper, TextField} from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Pagination,
+    Paper,
+    Select, SelectChangeEvent,
+    TextField
+} from "@mui/material";
 
 export const SearchFilms = () => {
-    const [valueInput, setValueInput] = useState('')
+    const [nameMovie, setNameMovie] = useState('')
+    const [yearMovie, setYearMovie] = useState('')
+    const [type, setType] = React.useState('');
     const [Error, setError] = useState('Please,using english words')
     const [scroll, setScroll] = useState(0);
+
+    console.log(nameMovie)
+    console.log(yearMovie)
+    console.log(type)
+    const handleChange = (event: SelectChangeEvent) => {
+        setType(event.target.value as string);
+    };
 
     const scrollStateValue = useSelector<AppStoreType, number>(state => state.app.scroll)
 
@@ -25,8 +45,6 @@ export const SearchFilms = () => {
     useEffect(() => window.scrollTo(0, scrollStateValue), []);
 
 
-
-
     const dispatch = useDispatch<AppDispatch>()
 
     const films = useSelector<AppStoreType, Array<filmType>>(state => state.app.films)
@@ -38,28 +56,33 @@ export const SearchFilms = () => {
     const allPagesCount = Math.ceil(+totalResult / 10)
 
     const onClickHandlerSearchByTitle = (id: string) => {
-        dispatch(getOneFilmTC(id,scroll))
+        dispatch(getOneFilmTC(id, scroll))
 
     }
-    const onChangeHandlerTextField = (e: ChangeEvent<HTMLInputElement>) => {
+    const onChangeHandlerNameMovie = (e: ChangeEvent<HTMLInputElement>) => {
         setError('')
         let value = e.currentTarget.value
         value = value.replace(/[^A-Za-z\s+-/\d/]/ig, '')
-        setValueInput(value)
+        setNameMovie(value)
+    }
+    const onChangeHandlerYearMovie = (e: ChangeEvent<HTMLInputElement>) => {
+        setError('')
+        let value = e.currentTarget.value
+        setYearMovie(value)
     }
 
     const onClickHandler = () => {
-        if(valueInput.trim() === ''){
+        if (nameMovie.trim() === '') {
             setError('Field required')
-        }else {
-            dispatch(getFilmsTC(valueInput.trim(), 1))
-            setValueInput('')
+        } else {
+            dispatch(getFilmsTC(nameMovie.trim(), 1, yearMovie, type))
+            setNameMovie('')
         }
 
     }
 
     const onChangeHandlerPagination = (event: React.ChangeEvent<unknown>, page: number) => {
-        dispatch(getFilmsTC(titleSearchFilm, page))
+        dispatch(getFilmsTC(titleSearchFilm, page, yearMovie, type))
     }
 
     const searchFilms = films.map(film => {
@@ -83,12 +106,35 @@ export const SearchFilms = () => {
     }
 
     return <div className={c.containerSearchFilms}>
-        <TextField  style={{margin: '10px'}} value={valueInput} onChange={onChangeHandlerTextField} color={"info"}
-                   variant="outlined"/>
-        <Button  variant="outlined" onClick={onClickHandler}>Request films</Button>
+        <div className={c.groupInputs}>
+            <TextField label="name movie" style={{margin: '10px'}} value={nameMovie} onChange={onChangeHandlerNameMovie}
+                       color={"info"}
+                       variant="outlined"/>
+            <TextField label="year" style={{margin: '10px'}} value={yearMovie} onChange={onChangeHandlerYearMovie}
+                       type='number' color={"secondary"}
+                       variant="outlined"/>
+            <Box style={{margin: '10px'}} sx={{minWidth: 120}}>
+                <FormControl fullWidth>
+                    <InputLabel id="demo-simple-select-label">Type</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-label"
+                        id="demo-simple-select"
+                        value={type}
+                        label="Year"
+                        onChange={handleChange}
+                    >
+                        <MenuItem value={'movie'}>Movie</MenuItem>
+                        <MenuItem value={'series'}>Series</MenuItem>
+                        <MenuItem value={'episode'}>Episode</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+        </div>
+        <Button variant="outlined" onClick={onClickHandler}>Request films</Button>
         <Pagination style={{margin: '10px'}} page={currentPage} onChange={onChangeHandlerPagination}
                     count={allPagesCount}/>
         {searchFilms}
-    </div>;
+    </div>
+        ;
 };
 

@@ -6,7 +6,10 @@
     width: 90%;
     height: 10%;
 }
-
+.groupInputs{
+    display: flex;
+    flex-direction: row;
+}
 
 .film {
     min-width: 90%;
