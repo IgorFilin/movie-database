@@ -25,9 +25,14 @@ export const SearchFilms = () => {
     const [Error, setError] = useState('Please,using english words')
     const [scroll, setScroll] = useState(0);
 
-    console.log(nameMovie)
-    console.log(yearMovie)
-    console.log(type)
+    const films = useSelector<AppStoreType, Array<filmType>>(state => state.app.films)
+    const totalResult = useSelector<AppStoreType, string>(state => state.app.totalResults)
+    const currentPage = useSelector<AppStoreType, number>(state => state.app.currentPage)
+    const titleSearchFilm = useSelector<AppStoreType, string>(state => state.app.titleSearchFilm)
+    const isLoading = useSelector<AppStoreType, boolean>(state => state.app.isLoading)
+
+    const dispatch = useDispatch<AppDispatch>()
+
     const handleChange = (event: SelectChangeEvent) => {
         setType(event.target.value as string);
     };
@@ -35,23 +40,6 @@ export const SearchFilms = () => {
     const scrollStateValue = useSelector<AppStoreType, number>(state => state.app.scroll)
 
     const onScroll = useCallback(() => setScroll(Math.round(window.scrollY)), []);
-
-    useEffect(() => {
-        onScroll();
-        window.addEventListener("scroll", onScroll);
-        return () => window.removeEventListener("scroll", onScroll);
-    }, [onScroll]);
-
-    useEffect(() => window.scrollTo(0, scrollStateValue), []);
-
-
-    const dispatch = useDispatch<AppDispatch>()
-
-    const films = useSelector<AppStoreType, Array<filmType>>(state => state.app.films)
-    const totalResult = useSelector<AppStoreType, string>(state => state.app.totalResults)
-    const currentPage = useSelector<AppStoreType, number>(state => state.app.currentPage)
-    const titleSearchFilm = useSelector<AppStoreType, string>(state => state.app.titleSearchFilm)
-    const isLoading = useSelector<AppStoreType, boolean>(state => state.app.isLoading)
 
     const allPagesCount = Math.ceil(+totalResult / 10)
 
@@ -84,6 +72,15 @@ export const SearchFilms = () => {
     const onChangeHandlerPagination = (event: React.ChangeEvent<unknown>, page: number) => {
         dispatch(getFilmsTC(titleSearchFilm, page, yearMovie, type))
     }
+
+    useEffect(() => {
+        onScroll();
+        window.addEventListener("scroll", onScroll);
+        return () => window.removeEventListener("scroll", onScroll);
+    }, [onScroll]);
+
+    useEffect(() => window.scrollTo(0, scrollStateValue), []);
+
 
     const searchFilms = films.map(film => {
         return (
